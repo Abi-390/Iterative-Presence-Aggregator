@@ -7,7 +7,12 @@ lazy val root = (project in file(".")).enablePlugins(PlayScala)
 
 scalaVersion := "2.13.18"
 
-libraryDependencies += guice
+libraryDependencies ++= Seq(
+  guice,                                                          // DI — always include
+  "io.getquill"  %% "quill-jdbc-zio" % "4.8.0",                 // Quill ORM
+  "mysql"         % "mysql-connector-java" % "8.0.33",           // MySQL JDBC driver
+  "com.zaxxer"    % "HikariCP"             % "5.0.1"             // Connection pool
+)
 libraryDependencies += "org.scalatestplus.play" %% "scalatestplus-play" % "7.0.2" % Test
 
 // Adds additional packages into Twirl
