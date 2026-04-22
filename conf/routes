@@ -15,3 +15,5 @@ GET     /assets/*file               controllers.Assets.versioned(path="/public",
 # Feature Push
 
 #Test Route 222
+
+#Test Route 6969
