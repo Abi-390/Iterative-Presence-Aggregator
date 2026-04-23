@@ -42,6 +42,8 @@
   <logger name="play" level="INFO"/>
   <logger name="application" level="DEBUG"/>
 
+  <logger name="db" level="INFO"/>
+
   <root level="WARN">
     <appender-ref ref="ASYNCFILE"/>
     <appender-ref ref="ASYNCSTDOUT"/>
