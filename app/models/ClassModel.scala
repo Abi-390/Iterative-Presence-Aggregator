@@ -4,7 +4,7 @@ import play.api.libs.json._
 
 case class ClassModel(
                        id: Int,
-                       teacherId: Int,
+                       teacherId: Option[Int],
                        name: String
                      )
 
