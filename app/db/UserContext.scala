@@ -20,6 +20,7 @@ class UserContext @Inject()(config: Configuration) {
   private val dataSource = new HikariDataSource(hikariConfig)
   val ctx = new MysqlJdbcContext(SnakeCase, dataSource)
 
+  import ctx._
 
   // DB CONNECTION TEST
   try {
@@ -48,5 +49,7 @@ class UserContext @Inject()(config: Configuration) {
 
       ()
   }
+
+
 
 }
