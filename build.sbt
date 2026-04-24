@@ -11,10 +11,10 @@ libraryDependencies ++= Seq(
   guice,                                                        // DI — always include
   jdbc,                                                         //By adding jdbc, Play automatically integrates HikariCP, which is a high-performance JDBC connection pool
   "io.getquill"  %% "quill-jdbc-zio" % "4.8.0",                 // Quill ORM
-  "mysql"         % "mysql-connector-java" % "8.0.33",           // MySQL JDBC driver
-  "com.zaxxer"    % "HikariCP"             % "5.0.1" ,            // Connection pool
-  "com.auth0"     % "java-jwt"             % "4.4.0",            //JWT
-
+  "mysql"         % "mysql-connector-java" % "8.0.33",          // MySQL JDBC driver
+  "com.zaxxer"    % "HikariCP"             % "5.0.1" ,          // Connection pool
+  "com.auth0"     % "java-jwt"             % "4.4.0",           //JWT
+  "org.mindrot"   % "jbcrypt"                % "0.4",           //jbcrypt
 )
 libraryDependencies += "org.scalatestplus.play" %% "scalatestplus-play" % "7.0.2" % Test
 
