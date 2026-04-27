@@ -1,6 +1,6 @@
 package db
 
-import models.User
+import models.Users
 import io.getquill._
 import com.zaxxer.hikari.{HikariConfig, HikariDataSource}
 import play.api.{Configuration, Logger}

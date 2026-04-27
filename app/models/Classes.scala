@@ -2,17 +2,17 @@ package models
 
 import play.api.libs.json._
 
-case class ClassModel(
+case class Classes(
                        id: Int,
                        teacherId: Option[Int],
                        name: String
                      )
 
-object ClassModel {
+object Classes {
 
-  implicit val format: OFormat[ClassModel] = Json.format[ClassModel]
+  implicit val format: OFormat[Classes] = Json.format[Classes]
 
-  val safeWrites: Writes[ClassModel] = Writes { class_model =>
+  val safeWrites: Writes[Classes] = Writes { class_model =>
     Json.obj(
       "id" -> class_model.id,
       "teacherId" -> class_model.teacherId,

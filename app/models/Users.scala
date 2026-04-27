@@ -8,7 +8,7 @@ object UserRole {
   val Teacher = "TEACHER"
 }
 
-case class User(
+case class Users(
                  id: Int,
                  fullName: String,
                  email: String,
@@ -16,12 +16,12 @@ case class User(
                  role: String = UserRole.Teacher
                )
 
-object User {
+object Users {
   // standard JSON format
-  implicit val format: OFormat[User] = Json.format[User]
+  implicit val format: OFormat[Users] = Json.format[Users]
 
   // Safe writes: passwordHash frontend t push kra nai
-  val safeWrites: Writes[User] = Writes { user =>
+  val safeWrites: Writes[Users] = Writes { user =>
     Json.obj(
       "id" -> user.id,
       "fullName" -> user.fullName,
