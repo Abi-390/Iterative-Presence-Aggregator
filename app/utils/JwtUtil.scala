@@ -15,11 +15,11 @@ object JwtUtil {
 
 
   // Generate token — like jwt.sign({ userId, email }, secret)
-  def generateToken(id:String,email:String):String=
+  def generateToken(id:Int):String=        //fixed this of parameter type mismatch with db model
     JWT.create()
       .withIssuer(issuer)
-      .withClaim("id", id)// like payload.userId in Node
-      .withClaim("email", email) // like payload.email in Node
+      .withClaim("id",  Integer.valueOf(id))// like payload.userId in Node
+
       .sign(algorithm)
 
 
