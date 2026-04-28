@@ -30,7 +30,6 @@ object JwtUtil {
            .withIssuer(issuer)
            .build()
            .verify(token)
-           Some(decoded.getClaim("id").asInt())
            // returns the userId from inside the token
            } catch {
            case _: JWTVerificationException => None
