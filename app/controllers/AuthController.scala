@@ -11,6 +11,7 @@ import play.api.Logging
 import dtos._
 import utils.ApiHandler
 import services.AuthService
+import dtos.CreateUserRequest
 
 @Singleton
 class AuthController @Inject()(cc: ControllerComponents, authService: AuthService)(implicit ec: ExecutionContext) extends AbstractController(cc) with Logging {
