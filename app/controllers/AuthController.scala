@@ -1,6 +1,6 @@
 package controllers
 
-import actions.AuthAction
+
 import javax.inject._
 
 import concurrent.{ExecutionContext, Future}
@@ -13,7 +13,7 @@ import utils.ApiHandler
 import services.AuthService
 
 @Singleton
-class AuthController @Inject()(cc: ControllerComponents, authService: AuthService, authAction: AuthAction)(implicit ec: ExecutionContext) extends AbstractController(cc) with Logging {
+class AuthController @Inject()(cc: ControllerComponents, authService: AuthService)(implicit ec: ExecutionContext) extends AbstractController(cc) with Logging {
 
   implicit val createUserReads: Reads[CreateUserRequest] = Json.reads[CreateUserRequest]
   implicit val loginReads: Reads[LoginRequest] = Json.reads[LoginRequest]
