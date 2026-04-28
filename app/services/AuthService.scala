@@ -2,7 +2,7 @@ package services
 
 import models.Users
 import db.UserContext
-import dtos.{AuthResponse, CreateUserRequest}
+import dtos.{AuthResponse, CreateUserRequest, LoginRequest, UserResponse}
 import utils.{JwtUtil, PasswordUtil}
 
 import javax.inject.{Inject, Singleton}
@@ -36,7 +36,23 @@ import javax.inject.{Inject, Singleton}
     )
 
 
-}
+  }
+
+  def login(req: LoginRequest): Option[AuthResponse] = {
+    val maybeUser = userContext.ctx.run(
+      query[Users].filter(u => u.email == lift(req.email))
+    ).headOption
+
+    maybeUser.flatMap(user =>
+      if (PasswordUtil.verify(req.password, user.passwordHash)) {
+        val token = JwtUtil.generateToken(user.id)
+        Some(AuthResponse(
+          accessToken = token, user = UserResponse(user.id, user.fullName, user.email, user.role)
+        ))
+      } else {
+        None
+      })
+  }
 
 }
 
