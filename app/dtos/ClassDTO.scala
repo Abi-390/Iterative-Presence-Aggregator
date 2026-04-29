@@ -46,3 +46,20 @@ case class ClassResponse(
 object ClassResponse{
   implicit val writes:OWrites[ClassResponse]=Json.writes[ClassResponse]
 }
+
+/**
+ * DTO: ClassListResponse
+ *
+ * Purpose:
+ * - Used to return multiple classes
+ *
+ * Notes:
+ * -Wraps multiple class as objects
+ */
+case class ClassListResponse(
+                              classes: Seq[ClassResponse]
+                            )
+
+object ClassListResponse {
+  implicit val writes: OWrites[ClassListResponse] = Json.writes[ClassListResponse]
+}
