@@ -41,4 +41,6 @@ class AuthController @Inject()(cc: ControllerComponents, authService: AuthServic
         ApiHandler.handle(authService.login(data))
     )
   }
+
+
 }
