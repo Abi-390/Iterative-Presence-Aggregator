@@ -27,6 +27,7 @@ class AuthService @Inject()(userContext: UserContext)(implicit ec: ExecutionCont
       Left(ApiError("Invalid email format"))
     }
 
+
     //  Password validation
     else if (req.password.trim.isEmpty) {
       Left(ApiError("Password cannot be empty"))
