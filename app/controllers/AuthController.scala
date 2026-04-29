@@ -31,4 +31,15 @@ class AuthController @Inject()(cc: ControllerComponents, authService: AuthServic
         ApiHandler.handleMessage(authService.register(data))
     )
   }
+
+  def login = Action.async(parse.json) { request =>
+    request.body.validate[LoginRequest].fold(
+      errors =>
+        Future.successful(
+          ApiHandler.validationError(JsError.toJson(errors))
+        ),
+      data =>
+        ApiHandler.handleMessage(authService.login(data))
+    )
+  }
 }

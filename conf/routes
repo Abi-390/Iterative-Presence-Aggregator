@@ -2,3 +2,5 @@
 # Register a new user
 POST    /api/auth/register      controllers.AuthController.register
 
+#login
+POST   /api/auth/login          controllers.AuthController.login

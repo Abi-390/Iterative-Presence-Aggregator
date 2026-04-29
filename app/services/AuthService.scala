@@ -6,6 +6,7 @@ import dtos.{AuthResponse, CreateUserRequest, LoginRequest, UserResponse}
 import utils.{JwtUtil, PasswordUtil}
 
 import javax.inject.{Inject, Singleton}
+import scala.concurrent.Future
 
 @Singleton class AuthService @Inject()(userContext: UserContext) {
 
@@ -19,6 +20,14 @@ import javax.inject.{Inject, Singleton}
     emailRegex.matches(email.trim.toLowerCase)
 
   def register(req: CreateUserRequest): AuthResponse = {
+
+    val existingUser = userContext.ctx.run(
+      query[Users].filter(u => u.email == lift(req.email))
+    ).headOption
+
+    if (existingUser.isDefined) {
+      throw new Exception(s"User with email ${req.email} already exists")
+    }
 
     val hashedPassword = PasswordUtil.hash(req.password)
 
@@ -49,8 +58,8 @@ import javax.inject.{Inject, Singleton}
         Some(AuthResponse(
           accessToken = token, user = UserResponse(user.id, user.fullName, user.email, user.role)
         ))
-      } else {
-        None
+      } else{
+        throw new Exception("Invalid email or password")
       })
   }
 

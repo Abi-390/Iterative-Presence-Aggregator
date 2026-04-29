@@ -44,6 +44,8 @@
 
   <logger name="db" level="INFO"/>
 
+
+
   <root level="WARN">
     <appender-ref ref="ASYNCFILE"/>
     <appender-ref ref="ASYNCSTDOUT"/>
