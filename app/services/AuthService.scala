@@ -19,15 +19,16 @@ class AuthService @Inject()(userContext: UserContext)(implicit ec: ExecutionCont
   private def isValidEmail(email: String): Boolean =
     emailRegex.matches(email.trim.toLowerCase)
 
-
+  //  REGISTER
   def register(req: CreateUserRequest): Future[Either[ApiError, AuthResponse]] = Future {
 
-
+    //  Email validation
     if (!isValidEmail(req.email)) {
       Left(ApiError("Invalid email format"))
     }
 
 
+    //  Password validation
     else if (req.password.trim.isEmpty) {
       Left(ApiError("Password cannot be empty"))
     }
@@ -72,7 +73,7 @@ class AuthService @Inject()(userContext: UserContext)(implicit ec: ExecutionCont
     }
   }
 
-
+  //  LOGIN
   def login(req: LoginRequest): Future[Either[ApiError, AuthResponse]] = Future {
 
     val maybeUser = userContext.ctx.run(
