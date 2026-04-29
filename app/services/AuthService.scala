@@ -3,13 +3,13 @@ package services
 import models.Users
 import db.UserContext
 import dtos.{AuthResponse, CreateUserRequest, LoginRequest, UserResponse}
-import utils.{JwtUtil, PasswordUtil}
+import utils.{ApiError, JwtUtil, PasswordUtil}
 
 import javax.inject.{Inject, Singleton}
-import scala.concurrent.Future
+import scala.concurrent.{ExecutionContext, Future}
 
-@Singleton class AuthService @Inject()(userContext: UserContext) {
-
+@Singleton
+class AuthService @Inject()(userContext: UserContext)(implicit ec: ExecutionContext) {
 
   import userContext.ctx._
 
@@ -19,51 +19,90 @@ import scala.concurrent.Future
   private def isValidEmail(email: String): Boolean =
     emailRegex.matches(email.trim.toLowerCase)
 
-  def register(req: CreateUserRequest): AuthResponse = {
 
-    val existingUser = userContext.ctx.run(
-      query[Users].filter(u => u.email == lift(req.email))
-    ).headOption
+  def register(req: CreateUserRequest): Future[Either[ApiError, AuthResponse]] = Future {
 
-    if (existingUser.isDefined) {
-      throw new Exception(s"User with email ${req.email} already exists")
+
+    if (!isValidEmail(req.email)) {
+      Left(ApiError("Invalid email format"))
     }
 
-    val hashedPassword = PasswordUtil.hash(req.password)
 
-    val newUser = Users(0, req.fullName, req.email, hashedPassword, req.role.getOrElse("TEACHER"))
+    else if (req.password.trim.isEmpty) {
+      Left(ApiError("Password cannot be empty"))
+    }
 
-    val generatedId = userContext.ctx.run(
-      query[Users].insertValue(lift(newUser)).returningGenerated(_.id)
-    )
+    else {
+      val existingUser = userContext.ctx.run(
+        query[Users].filter(_.email == lift(req.email))
+      ).headOption
 
-    val token = JwtUtil.generateToken(generatedId)
+      if (existingUser.isDefined) {
+        Left(ApiError("Email already exists"))
+      } else {
 
-    AuthResponse(
-      accessToken = token,
-      user = dtos.UserResponse(generatedId, newUser.fullName, newUser.email, newUser.role)
-    )
+        val hashedPassword = PasswordUtil.hash(req.password)
 
+        val newUser = Users(
+          id = 0,
+          fullName = req.fullName,
+          email = req.email,
+          passwordHash = hashedPassword,
+          role = req.role.getOrElse("TEACHER")
+        )
 
+        val generatedId = userContext.ctx.run(
+          query[Users].insertValue(lift(newUser)).returningGenerated(_.id)
+        )
+
+        val token = JwtUtil.generateToken(generatedId)
+
+        Right(
+          AuthResponse(
+            accessToken = token,
+            user = UserResponse(
+              generatedId,
+              newUser.fullName,
+              newUser.email,
+              newUser.role
+            )
+          )
+        )
+      }
+    }
   }
 
-  def login(req: LoginRequest): Option[AuthResponse] = {
+
+  def login(req: LoginRequest): Future[Either[ApiError, AuthResponse]] = Future {
+
     val maybeUser = userContext.ctx.run(
-      query[Users].filter(u => u.email == lift(req.email))
+      query[Users].filter(_.email == lift(req.email))
     ).headOption
 
-    maybeUser.flatMap(user =>
-      if (PasswordUtil.verify(req.password, user.passwordHash)) {
-        val token = JwtUtil.generateToken(user.id)
-        Some(AuthResponse(
-          accessToken = token, user = UserResponse(user.id, user.fullName, user.email, user.role)
-        ))
-      } else{
-        throw new Exception("Invalid email or password")
-      })
+    maybeUser match {
+
+      case None =>
+        Left(ApiError("User not found"))
+
+      case Some(user) =>
+        if (!PasswordUtil.verify(req.password, user.passwordHash)) {
+          Left(ApiError("Invalid password"))
+        } else {
+
+          val token = JwtUtil.generateToken(user.id)
+
+          Right(
+            AuthResponse(
+              accessToken = token,
+              user = UserResponse(
+                user.id,
+                user.fullName,
+                user.email,
+                user.role
+              )
+            )
+          )
+        }
+    }
   }
-
 }
-
-
-

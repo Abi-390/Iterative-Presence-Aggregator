@@ -1,25 +1,26 @@
 package utils
 
-import dtos.AuthResponse
 import play.api.mvc._
 import play.api.libs.json._
-import play.api.http.Status
-
 import scala.concurrent.{ExecutionContext, Future}
 
 object ApiHandler {
 
+  def handle[T](
+                 result: Future[Either[ApiError, T]]
+               )(implicit writes: Writes[T], ec: ExecutionContext): Future[Result] = {
 
+    result.map {
+      case Right(data) =>
+        Results.Ok(
+          Json.toJson(ApiSuccess(data = data))
+        )
 
-  def handleMessage[T : Writes](result : T)(implicit ec: ExecutionContext): Future[Result] = {
-
-
-    Future.successful(
-      Results.Ok(
-        Json.toJson(ApiSuccess(data = result))
-      )
-    )
-
+      case Left(error) =>
+        Results.BadRequest(
+          Json.toJson(ApiFailure(error = error))
+        )
+    }
   }
 
   def validationError(errors: JsValue): Result = {
@@ -27,8 +28,7 @@ object ApiHandler {
       Json.toJson(
         ApiFailure(
           error = ApiError(
-            message = "Invalid request payload",
-            code = "VALIDATION_ERROR"
+            message = "Invalid request payload"
           )
         )
       )
