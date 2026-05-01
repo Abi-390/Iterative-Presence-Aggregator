@@ -34,4 +34,16 @@ object ApiHandler {
       )
     )
   }
+  /**
+  * Unauthorized Error (401)
+  */
+  def unauthorized(message: String): Result = {
+    Results.Unauthorized(
+      Json.toJson(
+        ApiFailure(
+          error = ApiError(message)
+        )
+      )
+    )
+  }
 }

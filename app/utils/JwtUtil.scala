@@ -11,7 +11,7 @@ object JwtUtil {
   private val config = ConfigFactory.load()
   private val secret= config.getString("jwt.secret")
   private val algorithm = Algorithm.HMAC256(secret)
-  private val issuer = "student_management"
+  private val issuer = "student management"
 
 
   // Generate token — like jwt.sign({ userId, email }, secret)
@@ -30,6 +30,7 @@ object JwtUtil {
            .withIssuer(issuer)
            .build()
            .verify(token)
+           Some(decoded.getClaim("id").asInt())
            // returns the userId from inside the token
            } catch {
            case _: JWTVerificationException => None
